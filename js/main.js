@@ -102,7 +102,8 @@ const BuildTransaction = function(txid, outid , destaddr, amount, script) {
 		"satoshis": 50000,
 	});
 	// Apprx 80 s/B pour la fee (output = 50000-80s/B*256B)
-	transaction.to(destaddr, 29500);
+	transaction.to(destaddr, 29500)
+		.lockUntilDate(1514761200, 0);
 	var pvkeyuser = $('#pvkey').val();
 	var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
 	transaction.inputs[0].sequenceNumber = 0;
