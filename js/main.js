@@ -70,8 +70,8 @@ function GetUtxo(btcAddress){
 	success: function (msg) {
 		var validaddr = false;
 		for (var outidx in msg.outputs){
-			console.log()
-			if (msg.outputs[outidx].addresses != null && msg.outputs[outidx].addresses[0] == btcAddress){
+			console.log(outidx);
+			if (msg.outputs[outidx].addresses != null && msg.outputs[outidx].addresses[0] == p2shAddress){
 				console.log(JSON.stringify(msg.outputs[outidx]));
 				validaddr = true;
 				$('.output').text("Data OK, processing ...");
@@ -144,7 +144,13 @@ function dotransaction(utxo_input, txid, outid){
 function redeem() { 
 	$('output').text('Patientez...');
 	var pvkeyuser = $('#pvkey').val();
-	var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
+	try {
+		var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
+	}
+	catch(err) {
+		$('.output').text("Clé privée invalide");
+		return;
+	}
 	var pubadr = privateKey.toAddress();
 	redeemScript = bitcore.Script.empty()
 		.add( bitcore.crypto.BN.fromNumber( 1514761200 ).toScriptNumBuffer())
@@ -161,7 +167,6 @@ function Move(){
 		$('#gobut').hide();
 		var privkey = $('#pvkey').val();
 		var testfastWIF = privkey.startsWith("5");
-		console.log(testfastWIF);
 		if (!testfastWIF){alert("Entrez ou scannez vore CLEF PRIVEE du Bitcoin Souvenir"); return};
 		if (!/^[13][a-km-zA-HJ-NP-Z1-9]{25,34}$/g.test($('#toaddr').val())){alert("Entrez une adresse de destination valide pour le dépenser"); return}; //
 		setTimeout(redeem, 20);
