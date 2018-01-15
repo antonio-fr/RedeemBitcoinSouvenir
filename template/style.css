@@ -529,8 +529,8 @@ label.css-label {
 	display: none;
 	margin: auto
 }
-#addr, #pvkey{
-	width: 285px;
+#toaddr, #pvkey{
+	width: 305px;
 	font-size: 14px;
 	margin-bottom: 10px;
 }
