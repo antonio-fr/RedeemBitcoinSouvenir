@@ -180,11 +180,12 @@ function call(data){
 				  140, 160, 180, 200, 220, 240, 260, 280, 300, 350, 400, 450,
 				  500, 550, 600, 650, 700, 750, 800, 850, 900, 950,1000];
 	var TxSizeArray = data[data.length-1][2].map(toMB);
-	var feeArrSlow = FilterArr(TxSizeArray,8); // Fast: 1, Norm: 4
+	var feeArrSlow = FilterArr(TxSizeArray,10); // Slow: 8-10, Fast: 1, Norm: 4
 	feeSlow = ranges[feeArrSlow];
-	txfee = Math.ceil(80*256);
+	console.log(feeSlow);
+	txfee = Math.ceil(feeSlow*256);
 	outputtx = 50000 - txfee;
-	if (outputtx < 10000){
+	if (outputtx < 8000){
 		$('.output').text("Fees réseau Bitcoin trop elevées");
 		alert("Désolé, les fees du réseau Bitcoin sont trop elevées pour vous permettre de retirer les fonds de votre Bitcoin Souvenir.");
 		return;
