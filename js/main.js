@@ -99,8 +99,14 @@ const BuildTransaction = function(txid, outid , destaddr, amount, script) {
 		"scriptPubKey": script,
 		"satoshis": 50000,
 	});
-	transaction.to(destaddr, outputtx)
-		.lockUntilDate(1514761200, 0);
+	try {
+		transaction.to(destaddr, outputtx)
+			.lockUntilDate(1514761200, 0);
+	}
+	catch(err) {
+		$('.output').text("ERREUR Adresse destination invalide");
+		throw("ERREUR Adresse destination invalide");
+	}
 	var pvkeyuser = $('#pvkey').val();
 	var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
 	transaction.inputs[0].sequenceNumber = 0;
@@ -114,15 +120,20 @@ const BuildTransaction = function(txid, outid , destaddr, amount, script) {
 	);
 	return transaction;
 };
-function end(message){
-	var assetidnode = document.createElement('div');
-	assetidnode.innerHTML = 'Transaction effectuee';
-	var txdiv = document.createElement('div');
-	document.getElementById("page").appendChild(assetidnode);
-	document.getElementById("page").appendChild(txdiv);
-	txdiv.style.margin = "20px";
+function end(err,message){
+	if (err==0){
+		var assetidnode = document.createElement('div');
+		assetidnode.innerHTML = 'Transaction effectuée';
+		var txdiv = document.createElement('div');
+		document.getElementById("page").appendChild(assetidnode);
+		document.getElementById("page").appendChild(txdiv);
+		txdiv.style.margin = "20px";
+	}
 	document.body.scrollTop = document.body.scrollHeight;
 	$('.output').text(message);
+	if (err==0){
+		$('.output').wrap('<a target="_blank" href="https://www.blocktrail.com/BTC/tx/'+message+'" />');
+	}
 };
 function dotransaction(utxo_input, txid, outid){
 	$('#qrcode').hide();
@@ -132,9 +143,9 @@ function dotransaction(utxo_input, txid, outid){
 	var pushtx = { tx: transaction.toString() };
 	$.post('https://api.blockcypher.com/v1/btc/main/txs/push', JSON.stringify(pushtx))
 		.done(function(srvrep){
-			end(srvrep.tx.hash);
+			end(0,srvrep.tx.hash);
 		})
-		.fail(function(){ end("Erreur broadcast Tx"); }
+		.fail(function(err){ end(1,"Erreur broadcast Tx :\n"+err.responseJSON.error); }
 		);
 };
 function redeem() { 
