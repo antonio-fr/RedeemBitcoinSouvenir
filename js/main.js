@@ -110,7 +110,6 @@ const BuildTransaction = function(txid, outid , destaddr, amount, script) {
 	var pvkeyuser = $('#pvkey').val();
 	var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
 	transaction.inputs[0].sequenceNumber = 0;
-	console.log(redeemScript);
 	var signature = bitcore.Transaction.sighash.sign(transaction, privateKey, bitcore.crypto.Signature.SIGHASH_ALL, 0, redeemScript);
 	transaction.inputs[0].setScript(
 		bitcore.Script.empty()
@@ -145,8 +144,14 @@ function dotransaction(utxo_input, txid, outid){
 		.done(function(srvrep){
 			end(0,srvrep.tx.hash);
 		})
-		.fail(function(err){ end(1,"Erreur broadcast Tx :\n"+err.responseJSON.error); }
-		);
+		.fail(function(err){
+			console.log(err);
+			var errmsgend = "Erreur broadcast Tx :\n"+err.statusText;
+			if (typeof err.responseJSON.error !== 'undefined') {
+				errmsgend += "\n"+err.responseJSON.error;
+			}
+			end(1,errmsgend);
+		});
 };
 function redeem() { 
 	$('output').text('Patientez...');
