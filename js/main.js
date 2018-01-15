@@ -38,7 +38,6 @@ window.onload = function () {
 				$('#reader').html5_qrcode_stop();
 				$('#reader').empty();
 				overlay.classList.remove("toggle");
-				console.log(data);
 				document.getElementById('toaddr').value = data;
 				document.body.scrollTop = document.body.scrollHeight;
 			}
@@ -70,7 +69,6 @@ function GetUtxo(){
 	success: function (msg) {
 		var validaddr = false;
 		for (var outidx in msg.outputs){
-			console.log(outidx);
 			if (msg.outputs[outidx].addresses != null && msg.outputs[outidx].addresses[0] == p2shAddress){
 				console.log(JSON.stringify(msg.outputs[outidx]));
 				validaddr = true;
@@ -146,7 +144,7 @@ function redeem() {
 		var privateKey = bitcore.PrivateKey.fromWIF(pvkeyuser);
 	}
 	catch(err) {
-		$('.output').text("Clé privée invalide");
+		$('.output').text("ERREUR Clé privée invalide");
 		return;
 	}
 	var pubadr = privateKey.toAddress();
@@ -189,7 +187,6 @@ function call(data){
 	txtconf += "\n Montant : "+outputtx/1e8+" BTC";
 	txtconf += "\n Fees    : "+txfee/1e8+" BTC";
 	if (confirm(txtconf) == true) {
-		console.log("You pressed OK!");
 		GetUtxo();
 	} else {
 			$('.output').text("Opération annulé par l'utilisateur");
